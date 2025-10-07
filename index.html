@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<head>
+  <meta language="en" />  
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Wheel of Fortune — Spin the Prize!</title>
+  <meta name="description" content="Interactive Wheel of Fortune game with multiple languages. Spin to win prizes and have fun!" />
+  <meta name="keywords" content="wheel of fortune, game, spin, prizes, fun, English, Ukrainian, Russian" />
+  <meta name="author" content="kiwwij" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="css/style.css" />
+  <script defer src="js/script.js"></script>
+</head>
+
+<body>
+  <div class="app" role="application">
+    <header class="app-header">
+      <div class="brand">
+        <span class="logo-dot" aria-hidden="true"></span>
+        <h1 id="title">Wheel of Fortune</h1>
+        <button id="modesBtn" class="btn info">Modes</button>
+      </div>
+
+      <div class="header-controls">
+        <select id="langSelect" aria-label="Language selector">
+          <option value="eng">🇺🇸 English</option>
+          <option value="ua">🇺🇦 Українська</option>
+          <option value="ru">🇷🇺 Русский</option>
+          <option value="ja">🇯🇵 日本語</option>
+        </select>
+        <div id="countChip" class="chip">0 options</div>
+      </div>
+    </header>
+
+    <main class="main-grid">
+      <section class="wheel-panel">
+        <div class="wheel-container" id="wheelContainer">
+          <canvas id="wheelCanvas" aria-label="Wheel"></canvas>
+          <div class="pointer" aria-hidden="true">▼</div>
+        </div>
+
+        <div class="controls">
+          <button id="spinBtn" class="btn primary">Spin</button>
+          <button id="resetBtn" class="btn ghost">Reset</button>
+        </div>
+      </section>
+
+      <aside class="sidebar">
+        <div class="input-row">
+          <input id="optionInput" type="text" placeholder="Enter an option..." aria-label="New option">
+          <button id="addBtn" class="btn">Add</button>
+        </div>
+
+        <div id="optionsList" class="list" aria-live="polite"></div>
+
+        <div class="small muted" id="tipText"></div>
+      </aside>
+    </main>
+
+    <footer class="app-footer">
+      <div id="resultTitle" class="small muted"></div>
+    </footer>
+  </div>
+
+    <!-- Modal / overlay -->
+    <div id="overlay" class="overlay hidden" aria-hidden="true">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <h2 id="modalTitle"></h2>
+        <div id="modalResult" class="result-text">—</div>
+        <div class="modal-actions">
+            <button id="removeContinue" class="btn primary">Remove & Continue</button>
+            <button id="closeModal" class="btn ghost">Close</button>
+        </div>
+        </div>
+    </div>
+
+    <!-- Modal / overlay modes -->
+    <div id="modesOverlay" class="overlay hidden" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modesTitle">
+        <h2 id="modesTitle">Choose Mode</h2>
+        <div class="modal-actions" style="flex-direction: column; gap: 12px;">
+        <button class="btn primary" onclick="window.location.href='random.html'">Random Number 🎲</button>
+        <button class="btn primary" onclick="window.location.href='coin.html'">Heads or Tails 🪙</button>
+        <button class="btn ghost" id="closeModes">Close</button>
+        </div>
+    </div>
+    </div>
+</body>
+</html>

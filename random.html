@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Random Number — Wheel of Fortune Mode</title>
+  <meta name="description" content="Random number generator mode for Wheel of Fortune game with language support." />
+  <meta name="author" content="kiwwij" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <canvas id="iconCanvas" width="64" height="64" style="display:none;"></canvas>
+  <link rel="stylesheet" href="css/style.css" />
+  <script defer src="js/random.js"></script>
+</head>
+
+<body>
+  <div class="app" role="application">
+    <header class="app-header">
+      <div class="brand">
+        <span class="logo-dot"></span>
+        <h1 id="title">🎲 Random Number</h1>
+      </div>
+
+      <div class="header-controls">
+        <select id="langSelect" aria-label="Language selector">
+          <option value="eng">🇺🇸 English</option>
+          <option value="ua">🇺🇦 Українська</option>
+          <option value="ru">🇷🇺 Русский</option>
+          <option value="ja">🇯🇵 日本語</option>
+        </select>
+        <button class="btn ghost" id="backBtn">← Back</button>
+      </div>
+    </header>
+
+    <main class="main-grid">
+      <section class="wheel-panel" style="align-items:center; justify-content:center; text-align:center;">
+        <div style="display:flex; flex-direction:column; gap:16px; align-items:center;">
+          <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">
+            <input id="minInput" type="number" placeholder="Min" style="width:100px;">
+            <input id="maxInput" type="number" placeholder="Max" style="width:100px;">
+          </div>
+
+          <button id="generateBtn" class="btn primary" style="width:180px;">Generate</button>
+
+          <div id="resultNumber" style="font-size:48px; font-weight:800; margin-top:10px;">—</div>
+        </div>
+      </section>
+
+      <aside class="sidebar">
+        <div class="small muted" id="tipText">
+          Enter two numbers — the generator will pick a random value between them.
+        </div>
+      </aside>
+    </main>
+
+    <footer class="app-footer">
+      <!-- <div class="small muted">© 2025 Wheel of Fortune Modes</div> -->
+    </footer>
+  </div>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Coin Flip — Heads or Tails!</title>
+  <meta name="description" content="Flip a virtual coin with sound, animation and multilingual interface." />
+  <meta name="keywords" content="coin flip, heads or tails, random, game, English, Ukrainian, Russian, Japanese" />
+  <meta name="author" content="kiwwij" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" />
+  <canvas id="iconCanvas" width="64" height="64" style="display:none;"></canvas>
+  <link rel="stylesheet" href="css/coin.css" />
+  <script defer src="js/coin.js"></script>
+</head>
+
+<body>
+  <div class="app" role="application">
+    <header class="app-header">
+      <div class="brand">
+        <span class="logo-dot"></span>
+        <h1 id="title">🪙 Coin Flip</h1>
+      </div>
+
+      <div class="header-controls">
+        <select id="langSelect" aria-label="Language selector">
+          <option value="eng">🇺🇸 English</option>
+          <option value="ua">🇺🇦 Українська</option>
+          <option value="ru">🇷🇺 Русский</option>
+          <option value="ja">🇯🇵 日本語</option>
+        </select>
+        <button class="btn ghost" id="backBtn">← Back</button>
+      </div>
+    </header>
+
+    <main class="main-center">
+      <section class="coin-panel">
+
+        <div id="coinContainer" class="coin-container">
+          <div id="coin" class="coin">
+            <div class="side front">🦅</div>
+            <div class="side back">🪙</div>
+          </div>
+        </div>
+
+        <div class="controls">
+          <button id="flipBtn" class="btn primary">
+            <i class="fa-solid fa-rotate"></i> <span id="flipText">Flip</span>
+          </button>
+          <button id="resetBtn" class="btn ghost">
+            <i class="fa-solid fa-arrow-rotate-left"></i> <span id="resetText">Reset</span>
+          </button>
+        </div>
+      </section>
+
+      <div id="resultText" class="result-text"></div>
+    </main>
+
+    <footer class="app-footer">
+      <!-- <small id="footerText" class="muted">© 2025 Wheel of Fortune Modes</small> -->
+    </footer>
+  </div>
+</body>
+</html>
