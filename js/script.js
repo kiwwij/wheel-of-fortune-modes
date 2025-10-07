@@ -1,85 +1,89 @@
 /* script.js — Wheel of Fortune
-   - 3 languages (eng, ua, ru)
-   - saves language and options in localStorage
-   - accurate result aligned to pointer ▼
-   - sound support for spin and result
+   Поддержка 4 языков (eng, ua, ru, ja)
+   Сохранение языка и вариантов в localStorage
+   Правильный подсчёт выбранного сектора (указатель сверху ▼)
+   Режим "выбывания" (удаление выпавшего варианта через модал)
+   Звуки для вращения и результата
+   Генерация фавиконки через canvas
+   Окно выбора режимов
 */
 
+/* Обёртка, чтобы не засорять глобальную область видимости */
 (() => {
-  
-// ---------- Translations ----------
-const translations = {
-  eng: {
-    title: "Wheel of Fortune",
-    inputPlaceholder: "Enter an option...",
-    addButton: "Add",
-    spinButton: "Spin",
-    resetButton: "Reset",
-    removeAndContinue: "Remove & Continue",
-    close: "Close",
-    modalTitle: "",
-    optionsCount: (n) => `${n} option${n !== 1 ? 's' : ''}`,
-    tip: "",
-    defaultOptions: ["Prize 1", "Prize 2", "Prize 3", "Prize 4", "Prize 5", "Prize 6"],
-    modesButton: "Modes",
-    modesTitle: "Choose Mode",
-    modeRandom: "Random Number 🎲",
-    modeCoin: "Heads or Tails 🪙"
-  },
-  ua: {
-    title: "Колесо Фортуни",
-    inputPlaceholder: "Введіть варіант...",
-    addButton: "Додати",
-    spinButton: "Крутити",
-    resetButton: "Скинути",
-    removeAndContinue: "Видалити & Продовжити",
-    close: "Закрити",
-    resultTitle: "",
-    optionsCount: (n) => `${n} варіант${n%10===1 && n%100!==11 ? '' : (n%10>=2 && n%10<=4 && !(n%100>=12 && n%100<=14) ? 'и' : 'ів')}`,
-    tip: "",
-    defaultOptions: ["Приз 1", "Приз 2", "Приз 3", "Приз 4", "Приз 5", "Приз 6"],
-    modesButton: "Режими",
-    modesTitle: "Оберіть режим",
-    modeRandom: "Випадкове число 🎲",
-    modeCoin: "Орёл або решка 🪙"
-  },
-  ru: {
-    title: "Колесо Фортуны",
-    inputPlaceholder: "Введите вариант...",
-    addButton: "Добавить",
-    spinButton: "Крутить",
-    resetButton: "Сброс",
-    removeAndContinue: "Удалить & Продолжить",
-    close: "Закрыть",
-    resultTitle: "",
-    optionsCount: (n) => `${n} вариант${n !== 1 ? 'ов' : ''}`,
-    tip: "",
-    defaultOptions: ["Приз 1", "Приз 2", "Приз 3", "Приз 4", "Приз 5", "Приз 6"],
-    modesButton: "Режимы",
-    modesTitle: "Выберите режим",
-    modeRandom: "Случайное число 🎲",
-    modeCoin: "Орёл или решка 🪙"
-  },
-  ja: {
-    title: "運命のルーレット",
-    inputPlaceholder: "オプションを入力...",
-    addButton: "追加",
-    spinButton: "スピン",
-    resetButton: "リセット",
-    removeAndContinue: "削除して続行",
-    close: "閉じる",
-    resultTitle: "",
-    optionsCount: (n) => `${n} 個のオプション`,
-    tip: "",
-    defaultOptions: ["賞品1", "賞品2", "賞品3", "賞品4", "賞品5", "賞品6"],
-    modesButton: "モード",
-    modesTitle: "モードを選択",
-    modeRandom: "ランダムな数字 🎲",
-    modeCoin: "表か裏か 🪙"
-  }
-};
 
-  // ---------- DOM ----------
+  // ---------- Переводы ----------
+  const translations = {
+    eng: {
+      title: "Wheel of Fortune",
+      inputPlaceholder: "Enter an option...",
+      addButton: "Add",
+      spinButton: "Spin",
+      resetButton: "Reset",
+      removeAndContinue: "Remove & Continue",
+      close: "Close",
+      modalTitle: "",
+      optionsCount: (n) => `${n} option${n !== 1 ? 's' : ''}`,
+      tip: "",
+      defaultOptions: ["Prize 1", "Prize 2", "Prize 3", "Prize 4", "Prize 5", "Prize 6"],
+      modesButton: "Modes",
+      modesTitle: "Choose Mode",
+      modeRandom: "Random Number 🎲",
+      modeCoin: "Heads or Tails 🪙"
+    },
+    ua: {
+      title: "Колесо Фортуни",
+      inputPlaceholder: "Введіть варіант...",
+      addButton: "Додати",
+      spinButton: "Крутити",
+      resetButton: "Скинути",
+      removeAndContinue: "Видалити & Продовжити",
+      close: "Закрити",
+      resultTitle: "",
+      optionsCount: (n) => `${n} варіант${n%10===1 && n%100!==11 ? '' : (n%10>=2 && n%10<=4 && !(n%100>=12 && n%100<=14) ? 'и' : 'ів')}`,
+      tip: "",
+      defaultOptions: ["Приз 1", "Приз 2", "Приз 3", "Приз 4", "Приз 5", "Приз 6"],
+      modesButton: "Режими",
+      modesTitle: "Оберіть режим",
+      modeRandom: "Випадкове число 🎲",
+      modeCoin: "Орёл або решка 🪙"
+    },
+    ru: {
+      title: "Колесо Фортуны",
+      inputPlaceholder: "Введите вариант...",
+      addButton: "Добавить",
+      spinButton: "Крутить",
+      resetButton: "Сброс",
+      removeAndContinue: "Удалить & Продолжить",
+      close: "Закрыть",
+      resultTitle: "",
+      optionsCount: (n) => `${n} вариант${n !== 1 ? 'ов' : ''}`,
+      tip: "",
+      defaultOptions: ["Приз 1", "Приз 2", "Приз 3", "Приз 4", "Приз 5", "Приз 6"],
+      modesButton: "Режимы",
+      modesTitle: "Выберите режим",
+      modeRandom: "Случайное число 🎲",
+      modeCoin: "Орёл или решка 🪙"
+    },
+    ja: {
+      title: "運命のルーレット",
+      inputPlaceholder: "オプションを入力...",
+      addButton: "追加",
+      spinButton: "スピン",
+      resetButton: "リセット",
+      removeAndContinue: "削除して続行",
+      close: "閉じる",
+      resultTitle: "",
+      optionsCount: (n) => `${n} 個のオプション`,
+      tip: "",
+      defaultOptions: ["賞品1", "賞品2", "賞品3", "賞品4", "賞品5", "賞品6"],
+      modesButton: "モード",
+      modesTitle: "モードを選択",
+      modeRandom: "ランダムな数字 🎲",
+      modeCoin: "表か裏か 🪙"
+    }
+  };
+
+  // ---------- DOM элементы ----------
   const canvas = document.getElementById('wheelCanvas');
   const ctx = canvas.getContext('2d');
   const wheelContainer = document.getElementById('wheelContainer');
@@ -98,21 +102,21 @@ const translations = {
   const resultTitleEl = document.getElementById('resultTitle');
   const tipText = document.getElementById('tipText');
 
-  // ---------- Audio ----------
-  const spinSound = new Audio('spin.mp3');
+  // ---------- Аудио (если есть файлы в корне) ----------
+  const spinSound = new Audio('spin.mp3'); // пока отсутствует
   spinSound.loop = true;
   const resultSound = new Audio('result.mp3');
 
-  // ---------- State & storage keys ----------
+  // ---------- Ключи localStorage и состояние ----------
   const LANG_KEY = 'wheel_lang_v1';
   const OPTIONS_KEY = 'wheel_options_v1';
   let currentLang = localStorage.getItem(LANG_KEY) || 'eng';
   let options = loadOptions() || translations[currentLang].defaultOptions.slice();
-  let rotation = 0; // radians
+  let rotation = 0; // угол, в радианах
   let isSpinning = false;
   let lastSelectedIndex = -1;
 
-  // ---------- Canvas sizing ----------
+  // ---------- Подгонка canvas под контейнер ----------
   function fitCanvas() {
     const rect = wheelContainer.getBoundingClientRect();
     const dpr = window.devicePixelRatio || 1;
@@ -125,7 +129,7 @@ const translations = {
   }
   window.addEventListener('resize', fitCanvas);
 
-  // ---------- Helpers ----------
+  // ---------- Вспомогательные: сохранение/загрузка ----------
   function saveLanguage(lang) { localStorage.setItem(LANG_KEY, lang); }
   function saveOptions() { try { localStorage.setItem(OPTIONS_KEY, JSON.stringify(options)); } catch (e) {} }
   function loadOptions() {
@@ -135,37 +139,37 @@ const translations = {
     } catch (e) { return null; }
   }
 
-function applyLanguage() {
-  const t = translations[currentLang];
-  
-  titleEl.textContent = t.title;
-  optionInput.placeholder = t.inputPlaceholder;
-  addBtn.textContent = t.addButton;
-  spinBtn.textContent = t.spinButton;
-  resetBtn.textContent = t.resetButton;
-  removeContinueBtn.textContent = t.removeAndContinue;
-  closeModalBtn.textContent = t.close;
-  resultTitleEl.textContent = t.resultTitle;
-  countChip.textContent = t.optionsCount(options.length);
-  tipText.textContent = t.tip;
+  // ---------- Применение перевода (обновление UI) ----------
+  function applyLanguage() {
+    const t = translations[currentLang];
+    // заголовки и плейсхолдер
+    if (titleEl) titleEl.textContent = t.title;
+    if (optionInput) optionInput.placeholder = t.inputPlaceholder;
+    if (addBtn) addBtn.textContent = t.addButton;
+    if (spinBtn) spinBtn.textContent = t.spinButton;
+    if (resetBtn) resetBtn.textContent = t.resetButton;
+    if (removeContinueBtn) removeContinueBtn.textContent = t.removeAndContinue;
+    if (closeModalBtn) closeModalBtn.textContent = t.close;
+    if (resultTitleEl) resultTitleEl.textContent = t.resultTitle;
+    if (countChip) countChip.textContent = t.optionsCount(options.length);
+    if (tipText) tipText.textContent = t.tip;
 
-  // ---- добавляем для кнопки "Modes" и модального окна ----
-  const modesBtn = document.getElementById('modesBtn');
-  const modesTitle = document.getElementById('modesTitle');
-  const modeButtons = document.querySelectorAll('#modesOverlay .modal-actions button');
+    // обновляем окно режимов (если есть)
+    const modesBtn = document.getElementById('modesBtn');
+    const modesTitle = document.getElementById('modesTitle');
+    const modeButtons = document.querySelectorAll('#modesOverlay .modal-actions button');
+    if (modesBtn) modesBtn.textContent = t.modesButton;
+    if (modesTitle) modesTitle.textContent = t.modesTitle;
+    if (modeButtons.length >= 3) {
+      modeButtons[0].textContent = t.modeRandom;
+      modeButtons[1].textContent = t.modeCoin;
+      modeButtons[2].textContent = t.close;
+    }
 
-  if (modesBtn) modesBtn.textContent = t.modesButton;
-  if (modesTitle) modesTitle.textContent = t.modesTitle;
-  if (modeButtons.length >= 3) {
-    modeButtons[0].textContent = t.modeRandom; // Random Number
-    modeButtons[1].textContent = t.modeCoin;   // Heads or Tails
-    modeButtons[2].textContent = t.close;      // Close
+    if (langSelect) langSelect.value = currentLang;
   }
 
-  langSelect.value = currentLang;
-}
-
-  // ---------- Drawing ----------
+  // ---------- Рисование колеса ----------
   function draw() {
     const w = canvas.clientWidth;
     const h = canvas.clientHeight;
@@ -177,10 +181,12 @@ function applyLanguage() {
     const n = Math.max(1, options.length);
     const sector = (Math.PI * 2) / n;
 
+    // сектора
     for (let i = 0; i < n; i++) {
       const start = -Math.PI / 2 + i * sector + rotation;
       const end = start + sector;
       const hue = (i * (360 / n)) % 360;
+
       ctx.beginPath();
       ctx.moveTo(cx, cy);
       ctx.arc(cx, cy, r, start, end, false);
@@ -191,6 +197,7 @@ function applyLanguage() {
       ctx.strokeStyle = 'rgba(0,0,0,0.22)';
       ctx.stroke();
 
+      // текст в секторе (перенос при необходимости)
       ctx.save();
       ctx.translate(cx, cy);
       const angle = start + sector / 2;
@@ -202,7 +209,7 @@ function applyLanguage() {
       ctx.restore();
     }
 
-    // outer ring
+    // внешний круг
     ctx.beginPath();
     ctx.arc(cx, cy, r + 6, 0, Math.PI * 2);
     ctx.lineWidth = 6;
@@ -210,6 +217,7 @@ function applyLanguage() {
     ctx.stroke();
   }
 
+  // вспомогательная функция для многострочного текста вдоль радиуса
   function drawWrappedText(ctx, text, radius) {
     const maxWidth = radius - 8;
     const words = String(text).split(/\s+/).reverse();
@@ -219,15 +227,22 @@ function applyLanguage() {
       const w = words.pop();
       const test = line ? (line + ' ' + w) : w;
       const m = ctx.measureText(test).width;
-      if (m > maxWidth && line) { lines.push(line); line = w; } else { line = test; }
+      if (m > maxWidth && line) {
+        lines.push(line);
+        line = w;
+      } else {
+        line = test;
+      }
     }
     if (line) lines.push(line);
     const maxLines = 3;
     const startY = -((lines.length - 1) * 12) - 6;
-    for (let i = 0; i < Math.min(lines.length, maxLines); i++) ctx.fillText(lines[i], radius - 10, startY + i * 18);
+    for (let i = 0; i < Math.min(lines.length, maxLines); i++) {
+      ctx.fillText(lines[i], radius - 10, startY + i * 18);
+    }
   }
 
-  // ---------- UI list ----------
+  // ---------- UI: список опций ----------
   function refreshList() {
     optionsList.innerHTML = '';
     options.forEach((opt, idx) => {
@@ -241,10 +256,11 @@ function applyLanguage() {
       del.textContent = '✕';
       del.title = 'Remove';
       del.style.background = 'transparent';
+      // удаление варианта
       del.addEventListener('click', () => {
         options.splice(idx, 1);
         saveOptions();
-        applyLanguage();
+        applyLanguage(); // обновляет countChip
         refreshList();
         draw();
       });
@@ -255,11 +271,11 @@ function applyLanguage() {
     countChip.textContent = translations[currentLang].optionsCount(options.length);
   }
 
-  // ---------- Determine sector under pointer ----------
+  // ---------- Поиск сектора, который под указателем (вверху) ----------
   function getSectorIndexAtPointer(rot) {
     const n = Math.max(1, options.length);
     const sector = (Math.PI * 2) / n;
-    const pointerAngle = -Math.PI / 2;
+    const pointerAngle = -Math.PI / 2; // указатель сверху
     let best = 0;
     let bestDiff = Infinity;
     for (let i = 0; i < n; i++) {
@@ -272,14 +288,19 @@ function applyLanguage() {
     }
     return best;
   }
-  function normalizeAngle(a) { a = (a + Math.PI) % (2 * Math.PI); if (a < 0) a += 2 * Math.PI; return a - Math.PI; }
+  function normalizeAngle(a) {
+    a = (a + Math.PI) % (2 * Math.PI);
+    if (a < 0) a += 2 * Math.PI;
+    return a - Math.PI;
+  }
 
-  // ---------- Spin logic with sound ----------
+  // ---------- Вращение колеса (анимация + звук) ----------
   function spin() {
     if (isSpinning || options.length === 0) return;
     isSpinning = true;
     spinBtn.disabled = true;
 
+    // запуск звука вращения (если доступен)
     spinSound.currentTime = 0;
     spinSound.play().catch(() => {});
 
@@ -287,7 +308,7 @@ function applyLanguage() {
     const sector = (Math.PI * 2) / n;
     const targetIndex = Math.floor(Math.random() * n);
     const f0 = - (targetIndex + 0.5) * sector;
-    const extraRot = Math.floor(Math.random() * 4) + 4;
+    const extraRot = Math.floor(Math.random() * 4) + 4; // 4..7 дополнительных кругов
     const kBase = Math.ceil((rotation - f0) / (2 * Math.PI));
     const k = kBase + extraRot;
     const endRotation = f0 + k * (2 * Math.PI);
@@ -295,6 +316,7 @@ function applyLanguage() {
     const startRotation = rotation;
     const duration = 4500 + Math.floor(Math.random() * 800);
     const startTime = performance.now();
+
     function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
 
     function frame(now) {
@@ -303,28 +325,30 @@ function applyLanguage() {
       const eased = easeOutCubic(t);
       rotation = startRotation + (endRotation - startRotation) * eased;
       draw();
-
-      if (t < 1) requestAnimationFrame(frame);
-      else {
+      if (t < 1) {
+        requestAnimationFrame(frame);
+      } else {
         isSpinning = false;
         spinBtn.disabled = false;
+        // остановка звука вращения
         spinSound.pause();
         spinSound.currentTime = 0;
 
+        // нормализуем угол и вычисляем выбранный сектор
         rotation = rotation % (2 * Math.PI);
         const selected = getSectorIndexAtPointer(rotation);
         lastSelectedIndex = selected;
 
+        // проигрываем звук результата и показываем модал
         resultSound.currentTime = 0;
         resultSound.play().catch(() => {});
-
         showResult(selected);
       }
     }
     requestAnimationFrame(frame);
   }
 
-  // ---------- Modal / result ----------
+  // ---------- Показ результата в модальном окне ----------
   function showResult(index) {
     modalResult.textContent = options[index] ?? '—';
     overlay.classList.remove('hidden');
@@ -335,7 +359,8 @@ function applyLanguage() {
     overlay.setAttribute('aria-hidden', 'true');
   }
 
-  // ---------- Events ----------
+  // ---------- События UI ----------
+  // Добавление варианта
   addBtn.addEventListener('click', () => {
     const v = optionInput.value.trim();
     if (!v) return;
@@ -345,10 +370,13 @@ function applyLanguage() {
     refreshList();
     draw();
   });
+  // Enter в инпуте = добавить
   optionInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') addBtn.click(); });
 
+  // Кнопка "Крутить"
   spinBtn.addEventListener('click', spin);
 
+  // Сброс к дефолтным вариантам текущего языка
   resetBtn.addEventListener('click', () => {
     options = translations[currentLang].defaultOptions.slice();
     rotation = 0;
@@ -357,6 +385,7 @@ function applyLanguage() {
     draw();
   });
 
+  // Удалить выпавший вариант и продолжить
   removeContinueBtn.addEventListener('click', () => {
     if (lastSelectedIndex >= 0 && lastSelectedIndex < options.length) {
       options.splice(lastSelectedIndex, 1);
@@ -365,16 +394,21 @@ function applyLanguage() {
       refreshList();
       draw();
       closeModal();
-    } else closeModal();
+    } else {
+      closeModal();
+    }
   });
 
+  // Закрыть модал
   closeModalBtn.addEventListener('click', closeModal);
   overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
 
+  // Переключение языка
   langSelect.addEventListener('change', (e) => {
     currentLang = e.target.value;
     saveLanguage(currentLang);
     applyLanguage();
+    // если опций в localStorage нет — поставить дефолтные текущего языка
     if (!localStorage.getItem(OPTIONS_KEY)) {
       options = translations[currentLang].defaultOptions.slice();
       saveOptions();
@@ -383,89 +417,102 @@ function applyLanguage() {
     draw();
   });
 
-  document.querySelector('.pointer').addEventListener('click', spin);
-  document.addEventListener('keydown', (e) => { if (e.code === 'Space') { e.preventDefault(); spin(); } });
+  // Клик по указателю тоже запускает вращение
+  const pointerEl = document.querySelector('.pointer');
+  if (pointerEl) pointerEl.addEventListener('click', spin);
 
-  // ---------- Init ----------
+  // Пробел запускает спин, но НЕ если фокус в input/textarea
+  document.addEventListener('keydown', (e) => {
+    const activeEl = document.activeElement;
+    const ignoreTags = ['INPUT', 'TEXTAREA'];
+    if (ignoreTags.includes(activeEl.tagName)) return; // игнорируем если ввод
+    if (e.code === 'Space') {
+      e.preventDefault();
+      spin();
+    }
+  });
+
+  // ---------- Инициализация ----------
   function init() {
     langSelect.value = currentLang;
     applyLanguage();
     refreshList();
     fitCanvas();
+    // начальное рисование
     requestAnimationFrame(draw);
   }
   init();
 
-})();
+})(); // конец IIFE
 
-    function createFavicon() {
-      const canvas = document.createElement('canvas');
-      canvas.width = 64;
-      canvas.height = 64;
-      const ctx = canvas.getContext('2d');
+// ---------- Генерация фавиконки через canvas ----------
+function createFavicon() {
+  const canvas = document.createElement('canvas');
+  canvas.width = 64;
+  canvas.height = 64;
+  const ctx = canvas.getContext('2d');
 
-      const cx = 32;
-      const cy = 32;
-      const r = 30;
-      const segments = 8;
+  const cx = 32;
+  const cy = 32;
+  const r = 30;
+  const segments = 8;
 
-      // Рисуем радужное колесо
-      for (let i = 0; i < segments; i++) {
-        const start = (i * 2 * Math.PI) / segments;
-        const end = ((i + 1) * 2 * Math.PI) / segments;
-        const hue = (i * 360 / segments) % 360;
-        ctx.beginPath();
-        ctx.moveTo(cx, cy);
-        ctx.arc(cx, cy, r, start, end);
-        ctx.closePath();
-        ctx.fillStyle = `hsl(${hue}, 80%, 55%)`;
-        ctx.fill();
-      }
+  // Рисуем радужное колесо в миниатюре
+  for (let i = 0; i < segments; i++) {
+    const start = (i * 2 * Math.PI) / segments;
+    const end = ((i + 1) * 2 * Math.PI) / segments;
+    const hue = (i * 360 / segments) % 360;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, r, start, end);
+    ctx.closePath();
+    ctx.fillStyle = `hsl(${hue}, 80%, 55%)`;
+    ctx.fill();
+  }
 
-      // Блестящая белая точка в центре
-      const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, 10);
-      grad.addColorStop(0, 'rgba(255,255,255,1)');
-      grad.addColorStop(1, 'rgba(255,255,255,0)');
-      ctx.fillStyle = grad;
-      ctx.beginPath();
-      ctx.arc(cx, cy, 10, 0, 2 * Math.PI);
-      ctx.fill();
+  // Блестящая точка в центре
+  const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, 10);
+  grad.addColorStop(0, 'rgba(255,255,255,1)');
+  grad.addColorStop(1, 'rgba(255,255,255,0)');
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.arc(cx, cy, 10, 0, 2 * Math.PI);
+  ctx.fill();
 
-      // Преобразуем canvas в Data URL
-      const faviconURL = canvas.toDataURL('image/png');
+  // Создаём или обновляем <link rel="icon">
+  const faviconURL = canvas.toDataURL('image/png');
+  let link = document.querySelector("link[rel*='icon']");
+  if (!link) {
+    link = document.createElement('link');
+    link.rel = 'icon';
+    document.head.appendChild(link);
+  }
+  link.type = 'image/png';
+  link.href = faviconURL;
+}
+window.addEventListener('load', createFavicon);
 
-      // Создаем или заменяем тег <link rel="icon">
-      let link = document.querySelector("link[rel*='icon']");
-      if (!link) {
-        link = document.createElement('link');
-        link.rel = 'icon';
-        document.head.appendChild(link);
-      }
-      link.type = 'image/png';
-      link.href = faviconURL;
-    }
-
-    // Создаем фавиконку при загрузке страницы
-    window.addEventListener('load', createFavicon);
-
+// ---------- Окно выбора режимов ----------
 const modesBtn = document.getElementById('modesBtn');
 const modesOverlay = document.getElementById('modesOverlay');
 const closeModesBtn = document.getElementById('closeModes');
 
-modesBtn.addEventListener('click', () => {
-  modesOverlay.classList.remove('hidden');
-  modesOverlay.setAttribute('aria-hidden', 'false');
-});
-
-closeModesBtn.addEventListener('click', () => {
-  modesOverlay.classList.add('hidden');
-  modesOverlay.setAttribute('aria-hidden', 'true');
-});
-
-// Закрытие кликом по затемнению
-modesOverlay.addEventListener('click', (e) => {
-  if (e.target === modesOverlay) {
+if (modesBtn && modesOverlay) {
+  modesBtn.addEventListener('click', () => {
+    modesOverlay.classList.remove('hidden');
+    modesOverlay.setAttribute('aria-hidden', 'false');
+  });
+}
+if (closeModesBtn && modesOverlay) {
+  closeModesBtn.addEventListener('click', () => {
     modesOverlay.classList.add('hidden');
     modesOverlay.setAttribute('aria-hidden', 'true');
-  }
-});
+  });
+  // закрываем кликом по затемнению
+  modesOverlay.addEventListener('click', (e) => {
+    if (e.target === modesOverlay) {
+      modesOverlay.classList.add('hidden');
+      modesOverlay.setAttribute('aria-hidden', 'true');
+    }
+  });
+}
